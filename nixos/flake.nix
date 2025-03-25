@@ -7,7 +7,7 @@
     # Rust toolchain
     fenix.url = "github:nix-community/fenix";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
-    
+    templ.url = "github:a-h/templ";
     nixvim = {
       url = "github:nix-community/nixvim/nixos-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,6 +25,9 @@
       system = "x86_64-linux";
 
     in {
+    nixpkgs.overlays = [
+      inputs.templ.overlays.default
+    ];
 
     nixosConfigurations = {
         nixos = lib.nixosSystem {

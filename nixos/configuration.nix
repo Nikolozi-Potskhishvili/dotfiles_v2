@@ -104,9 +104,46 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  hardware.graphics = {
+    enable = true;
+  };
+
+  # Load nvidia driver for Xorg and Wayland
+  services.xserver.videoDrivers = ["nvidia"];
+
+  hardware.nvidia = {
+
+    # Modesetting is required.
+    modesetting.enable = true;
+
+    # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
+    # Enable this if you have graphical corruption issues or application crashes after waking
+    # up from sleep. This fixes it by saving the entire VRAM memory to /tmp/ instead 
+    # of just the bare essentials.
+    powerManagement.enable = false;
+
+    # Fine-grained power management. Turns off GPU when not in use.
+    # Experimental and only works on modern Nvidia GPUs (Turing or newer).
+    powerManagement.finegrained = false;
+
+    # Use the NVidia open source kernel module (not to be confused with the
+    # independent third-party "nouveau" open source driver).
+    # Support is limited to the Turing and later architectures. Full list of 
+    # supported GPUs is at: 
+    # https://github.com/NVIDIA/open-gpu-kernel-modules#compatible-gpus 
+    # Only available from driver 515.43.04+
+    open = false;
+
+    # Enable the Nvidia settings menu,
+	# accessible via `nvidia-settings`.
+    nvidiaSettings = true;
+
+    # Optionally, you may need to select the appropriate driver version for your specific GPU.
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
+  };
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -143,43 +180,45 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-   vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-   git
-   kitty
-   rofi
-   gcc
-   go
-   spotify
-   telegram-desktop
-   neofetch
-   postman
-   unzip
-   librewolf
-   lua
-   luajitPackages.luarocks-nix
-   lua-language-server
-   curl
-   gh
-   xclip
-   gnumake
-   discord
-   telegram-desktop
-   signal-desktop
-   ripgrep
-   python3
-   clang
-   cmake
-   nitrogen
-   btop
-   wine 
-   polybar
-   brave
-   glibc
-   jdk23
-   gnutar
-   wget
-   bear
-   zip
+    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    git
+    kitty
+    rofi
+    gcc
+    go
+    spotify
+    telegram-desktop
+    neofetch
+    postman
+    unzip
+    librewolf
+    lua
+    luajitPackages.luarocks-nix
+    lua-language-server
+    curl
+    gh
+    xclip
+    gnumake
+    discord
+    telegram-desktop
+    signal-desktop
+    ripgrep
+    python3
+    clang
+    cmake
+    nitrogen
+    btop
+    wine 
+    polybar
+    brave
+    glibc
+    jdk23
+    gnutar
+    wget
+    bear
+    zip
+    ethtool
+    templ
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -213,6 +252,13 @@
     font-awesome
   ];
   
+  programs.steam = {
+  enable = true;
+  remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+  dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+  localNetworkGameTransfers.openFirewall = true; # Open ports in the firewall for Steam Local Network Game Transfers
+  };
+
   nix.settings.experimental-features = ["nix-command" "flakes"];
 }
 

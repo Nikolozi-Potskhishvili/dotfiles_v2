@@ -18,7 +18,8 @@
   
   programs.kitty = {
     enable = true;
-    themeFile = "base2tone-mall-dark";
+    # themeFile = "base2tone-mall-dark";
+    themeFile = "duckbones";
     settings = {
       cursor_trail = 3; 
       dynamic_background_opacity = true;
@@ -103,8 +104,8 @@
       signcolumn = "yes:1";
     };
 
-    colorschemes.rose-pine.enable = true;
-
+    # colorschemes.rose-pine.enable = true;
+    colorschemes.cyberdream.enable = true;
     clipboard = {
       providers = {
         wl-copy.enable = true; # Wayland 
@@ -158,7 +159,16 @@
       };
       treesitter = {
         enable = true;
-        settings.ensure_installed = [ "rust" "lua" "json" "toml" ]; 
+	settings = {
+	  indent.enable = true;
+	  highlight.enable = true;
+	};
+	folding = false;
+	nixvimInjections = true;
+	grammarPackages = pkgs.vimPlugins.nvim-treesitter.allGrammars;
+      };
+      treesitter-textobjects = {
+	enable = false;
       };
       luasnip.enable = true;
       web-devicons.enable = true;
