@@ -226,6 +226,7 @@
     unrar
     gparted
     libsForQt5.dolphin
+    woeusb
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
