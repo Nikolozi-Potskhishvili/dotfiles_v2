@@ -185,6 +185,8 @@
 	clangd.enable = true;
 	htmx.enable = true;
 	html.enable = true;
+	templ.enable = true;
+	ts_ls.enable = true;
 	gopls.enable = true;
 	rust_analyzer = {
 	  enable = true;

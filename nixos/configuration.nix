@@ -208,7 +208,7 @@
     cmake
     nitrogen
     btop
-    wine 
+    wineWowPackages.stable
     polybar
     brave
     glibc
@@ -219,6 +219,13 @@
     zip
     ethtool
     templ
+    qbittorrent
+    p7zip
+    lutris
+    pavucontrol
+    unrar
+    gparted
+    libsForQt5.dolphin
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
