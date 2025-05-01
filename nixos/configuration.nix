@@ -227,6 +227,16 @@
     woeusb
   ];
 
+  # Postgresql setup
+  # config.services.postgresql = {
+  #   enable = true;
+  #   ensureDatabases = [ "grindOrDieDB" ];
+  #   authentication = pkgs.lib.mkOverride 10 ''
+  #     #type database  DBuser  auth-method
+  #     local all       all     trust
+  #   '';
+  # };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
