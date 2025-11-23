@@ -94,7 +94,8 @@
       updatetime = 300;
       number = true;
       relativenumber = true;
-      shiftwidth = 2;
+      shiftwidth = 4;
+      tabstop = 4;
       swapfile = false;
       undofile = true;
       incsearch = true;
@@ -122,6 +123,9 @@
       {
         mode = "n"; key = "<C-u>"; action = "<C-u>zz"; options.silent = true;
       }
+			{
+				mode = "i"; key = "<C-e>";   action = "if err != nil {<CR>return<CR>}<Esc>kA"; options.silent = true;
+			}
 
       # Ctrl+Backspace: Delete previous word
       {
@@ -140,121 +144,136 @@
       autoclose.enable = true;
       comment.enable = true;
       telescope = {
-	enable = true;
-	extensions = {
-	  fzf-native = {
-	    enable = true;
-	  };
-	};
-	settings = {
-	};
-	keymaps = {
-	  "<leader>ff" = {
-	    action = "find_files";
-	    options = {
-	      desc = "Find project files";
-	    };
-	  };
-	}; 
-      };
+				enable = true;
+				extensions = {
+					fzf-native = {
+						enable = true;
+					};
+				};
+				settings = {
+				};
+				keymaps = {
+					"<leader>ff" = {
+						action = "find_files";
+						options = {
+							desc = "Find project files";
+						};
+					};
+				}; 
+			};
       treesitter = {
-        enable = true;
-	settings = {
-	  indent.enable = true;
-	  highlight.enable = true;
-	};
-	folding = false;
-	nixvimInjections = true;
-	grammarPackages = pkgs.vimPlugins.nvim-treesitter.allGrammars;
-      };
-      treesitter-textobjects = {
-	enable = false;
-      };
-      luasnip.enable = true;
-      web-devicons.enable = true;
-      lspkind.enable = true;
-      which-key.enable = true;
-    };
+				enable = true;
+				settings = {
+					indent.enable = true;
+					highlight.enable = true;
+				};
+				folding = false;
+				nixvimInjections = true;
+				grammarPackages = pkgs.vimPlugins.nvim-treesitter.allGrammars;
+						};
+						treesitter-textobjects = {
+				enable = false;
+						};
+						luasnip.enable = true;
+						web-devicons.enable = true;
+						lspkind.enable = true;
+						which-key.enable = true;
+			};
 
-    plugins.lsp = {
-      enable = true;
-      inlayHints = true;
-      servers = {
-	lua_ls.enable = true;
-	nil_ls.enable = true;
-	clangd.enable = true;
-	htmx.enable = true;
-	html.enable = true;
-	templ.enable = true;
-	ts_ls.enable = true;
-	gopls.enable = true;
-	rust_analyzer = {
-	  enable = true;
-	  installCargo = false;
-          installRustc = false;
-	};
-      };
-      keymaps.lspBuf = {
-	"gd" = "definition";
-	"gD" = "references";
-	"gt" = "type_definition";
-	"gi" = "implementation";
-	"K" = "hover";
-      };
-    };
-    
+			plugins.lsp = {
+				enable = true;
+				inlayHints = true;
+				servers = {
+					csharp_ls.enable = true;
+					lua_ls.enable = true;
+					nil_ls.enable = true;
+					clangd.enable = true;
+					htmx.enable = true;
+					html.enable = true;
+					templ.enable = true;
+					ts_ls.enable = true;
+					gopls.enable = true;
+					yamlls.enable = true;
+					jsonls.enable = true;
+					rust_analyzer = {
+						enable = true;
+						installCargo = false;
+							installRustc = false;
+					};
+				};
+				keymaps.lspBuf = {
+					"gd" = "definition";
+					"gD" = "references";
+					"gt" = "type_definition";
+					"gi" = "implementation";
+					"K" = "hover";
+				};
+			};
+   	
+		plugins.nvim-surround = {
+			enable = true;
+		};
+
     plugins.cmp = {
       enable = true;
       autoEnableSources = true;
       settings.sources = [
-	{ name = "nvim_lsp"; }
-	{ name = "path"; }
-	{ name = "buffer"; }
+				{ name = "nvim_lsp"; }
+				{ name = "path"; }
+				{ name = "buffer"; }
       ];
       settings = {
-          mapping = {
-            "<CR>" = "cmp.mapping.confirm({ select = true })"; # Autocomplete confirm
-            "<C-Space>" = "cmp.mapping.complete()"; # Trigger completion manually
+				mapping = {
+					"<CR>" = "cmp.mapping.confirm({ select = true })"; # Autocomplete confirm
+					"<C-Space>" = "cmp.mapping.complete()"; # Trigger completion manually
 
-	    # Add next/previous selection
-	    "<Tab>" = "cmp.mapping.select_next_item()";  # Next suggestion
-	    "<S-Tab>" = "cmp.mapping.select_prev_item()"; # Previous suggestion
-	  };
+				# Add next/previous selection
+				"<Tab>" = "cmp.mapping.select_next_item()";  # Next suggestion
+				"<S-Tab>" = "cmp.mapping.select_prev_item()"; # Previous suggestion
+				};
       };
-    };
+		};
 
     extraConfigLua = ''
       -- Rust LSP settings
-      require("lspconfig").rust_analyzer.setup({
-        settings = {
-          ["rust-analyzer"] = {
-            cargo = { allFeatures = true },
-	    checkOnSave = { command = "clippy" },
-	    diagnostics = {
-	      enable = true,
-	      -- experimental = {
+			require("lspconfig").rust_analyzer.setup({
+				settings = {
+					["rust-analyzer"] = {
+						cargo = { allFeatures = true },
+			checkOnSave = { command = "clippy" },
+			diagnostics = {
+				enable = true,
+				-- experimental = {
 		 -- enable = true,
-	      -- },
-            },
-          }
-        }
-      })
+				-- },
+						},
+					}
+				}
+			})
 
-      vim.diagnostic.config({
-	update_in_insert = true, -- Update diagnostics while typing
-	virtual_text = true, -- Show errors inline
-	signs = true, -- Show signs in the gutter
-	underline = true, -- Underline errors
-      })
+		vim.diagnostic.config({
+			update_in_insert = true, -- Update diagnostics while typing
+			virtual_text = true, -- Show errors inline
+			signs = true, -- Show signs in the gutter
+			underline = true, -- Underline errors
+		})
 
-      vim.api.nvim_create_autocmd({"TextChanged", "TextChangedI"}, {
-	pattern = "*.rs",
-	callback = function()
-	  vim.lsp.buf.clear_references()
-	  vim.lsp.buf.document_highlight()
-	  vim.diagnostic.setloclist()
-	end,
-      })
+		vim.api.nvim_create_autocmd({"TextChanged", "TextChangedI"}, {
+			pattern = "*.rs",
+			callback = function()
+				vim.lsp.buf.clear_references()
+				vim.lsp.buf.document_highlight()
+				-- vim.diagnostic.setloclist()
+			end,
+		})
+
+	  vim.api.nvim_create_autocmd("FileType", {
+			pattern = { "javascript", "typescript", "html", "css", "nix"},
+			callback = function()
+			vim.opt_local.shiftwidth = 2
+			vim.opt_local.tabstop = 2
+			end
+		})
     '';
   };
 

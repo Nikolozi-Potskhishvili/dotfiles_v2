@@ -3,7 +3,6 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
-
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -14,16 +13,22 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/nvme0n1";
   boot.loader.grub.useOSProber = true;
+  
 
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
+  boot.kernelParams = [
+    "usbcore.autosuspend=-1"
+  ];
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
   networking.networkmanager.enable = true;
+
+  networking.networkmanager.wifi.powersave = false;
 
   # Set your time zone.
   time.timeZone = "Asia/Tbilisi";
@@ -199,8 +204,6 @@
     xclip
     gnumake
     discord
-    telegram-desktop
-    signal-desktop
     ripgrep
     python3
     clang
@@ -224,18 +227,15 @@
     unrar
     gparted
     libsForQt5.dolphin
+    nodejs
     woeusb
+    tiled
+    typescript
+    dotnet-sdk
+    usbutils
   ];
 
   # Postgresql setup
-  config.services.postgresql = {
-    enable = true;
-    ensureDatabases = [ "grindOrDieDB" ];
-    authentication = pkgs.lib.mkOverride 10 ''
-      #type database  DBuser  auth-method
-      local all       all     trust
-    '';
-  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
