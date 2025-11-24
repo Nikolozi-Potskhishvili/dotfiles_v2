@@ -210,7 +210,6 @@
     cmake
     nitrogen
     btop
-    wineWowPackages.stable
     polybar
     brave
     glibc
