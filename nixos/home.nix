@@ -32,9 +32,9 @@
     enable = false;
     settings = {
       blur = {
-	method = "gaussian";  # Options: "kernel", "box", "gaussian"
-	size = 10;  # Increase for stronger blur
-	deviation = 5.0;  # Adjust for smoothness
+				method = "gaussian";  # Options: "kernel", "box", "gaussian"
+				size = 10;  # Increase for stronger blur
+				deviation = 5.0;  # Adjust for smoothness
       };
       blur-background = true;
       blur-background-frame = true;
@@ -82,9 +82,13 @@
       bind-key l select-pane -R
     '';
   };
+
+	programs.neovim = {
+		enable = true;
+	};
     
   programs.nixvim = {
-    enable = true;
+    enable = false;
     defaultEditor = true;
     viAlias = true;
     vimAlias = true;

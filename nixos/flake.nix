@@ -2,17 +2,17 @@
   description = "Flake";
   inputs = {
     nixpkgs = {
-      url = "github:NixOs/nixpkgs/nixos-24.11";
+      url = "github:NixOs/nixpkgs/nixos-25.05";
     };
     # Rust toolchain
     fenix.url = "github:nix-community/fenix";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
     templ.url = "github:a-h/templ";
     nixvim = {
-      url = "github:nix-community/nixvim/nixos-24.11";
+      url = "github:nix-community/nixvim/nixos-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager.url = "github:nix-community/home-manager/release-24.11";
+    home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     plugin-onedark.url = "github:navarasu/onedark.nvim";
