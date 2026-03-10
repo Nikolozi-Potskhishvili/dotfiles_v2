@@ -8,10 +8,6 @@
     fenix.url = "github:nix-community/fenix";
     fenix.inputs.nixpkgs.follows = "nixpkgs";
     templ.url = "github:a-h/templ";
-    nixvim = {
-      url = "github:nix-community/nixvim/nixos-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     home-manager.url = "github:nix-community/home-manager/release-25.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -19,7 +15,7 @@
     plugin-onedark.flake = false;
   };
 
-  outputs = {self, nixpkgs, home-manager, nixvim, fenix, ...}@inputs:
+  outputs = {self, nixpkgs, home-manager, fenix, ...}@inputs:
     let 
       lib = nixpkgs.lib;
       system = "x86_64-linux";
@@ -30,24 +26,25 @@
     ];
 
     nixosConfigurations = {
-        nixos = lib.nixosSystem {
-            inherit system;
-            modules = [
-	      ./configuration.nix
-	      ./services/postgres.nix
-	    ];
-        };
-    };
-    
-    homeConfigurations = {
-        nika = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.${system};
-          extraSpecialArgs = {inherit inputs;};
-          modules = [
-            nixvim.homeManagerModules.nixvim
-            ./home.nix
-          ];
-        };
+      nixos = lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./configuration.nix
+
+          home-manager.nixosModules.home-manager
+
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+
+            home-manager.users.nika = {
+              imports = [ ./home.nix ];
+            };
+          }
+
+          ./services/postgres.nix
+        ];
+      };
     };
   };
 }

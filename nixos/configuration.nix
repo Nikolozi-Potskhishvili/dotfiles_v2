@@ -68,12 +68,12 @@
  #  };
 
   networking.firewall = {
-  enable = true;
-  allowedTCPPorts = [ 80 443 8080];
-  allowedUDPPortRanges = [
-    { from = 4000; to = 4007; }
-    { from = 8000; to = 8010; }
-  ];
+    enable = true;
+    allowedTCPPorts = [ 80 443 8080 1883];
+    allowedUDPPortRanges = [
+      { from = 4000; to = 4007; }
+      { from = 8000; to = 8010; }
+    ];
 };
   services.xserver = {
     enable = true;
@@ -166,6 +166,24 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
+  # programs.zsh = {
+  #   enable = true;
+  #   enableCompletion = true;
+  #   autosuggestions.enable = true;
+  #   syntaxHighlighting.enable = true;
+  #   shellAliases = {
+  #     ll = "ls -l";
+  #     edit = "sudo -e";
+  #     update = "sudo nixos-rebuild switch";
+  #   };
+  #
+  #   histSize = 10000;
+  #   histFile = "$HOME/.zsh_history";
+  #   setOptions = [
+  #     "HIST_IGNORE_ALL_DUPS"
+  #   ];
+  # };
+  # programs.zsh.enable = true;
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.nika = {
     isNormalUser = true;
@@ -174,10 +192,20 @@
     packages = with pkgs; [
     #  thunderbird
     ];
+    # shell = pkgs.zsh;
   };
 
+  environment.extraInit = ''
+    export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+  '';
+
+  # environment.extraInit = ''
+  #   # Load Home Manager session variables (critical)
+  #   if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+  #     source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+  #   fi
+  # '';
   # Install firefox.
-  programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -226,12 +254,12 @@
     unrar
     gparted
     libsForQt5.dolphin
-    nodejs
     woeusb
     tiled
     typescript
-    dotnet-sdk
     usbutils
+    nodejs
+    doxygen
   ];
 
   # Postgresql setup

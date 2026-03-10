@@ -16,6 +16,14 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
   
+  programs.obs-studio = {
+    enable = true;
+    # enableVirtualCamera = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      droidcam-obs
+    ];
+  };
+
   programs.kitty = {
     enable = true;
     # themeFile = "base2tone-mall-dark";
@@ -45,10 +53,36 @@
 
 
   home.packages = with pkgs; [
-    rustup 
+    # Rust
+    rustc
+    cargo
+    clippy
+    rustfmt
+    rust-analyzer
+
     openssl
     openssl.dev
     pkg-config
+
+    # Go lsp
+    gopls
+    # C lsp
+    clang-tools
+    # Nix lsp
+    nil
+    # Python lsp
+    # tools needed by nvim
+    pkgs.universal-ctags
+
+    # system tree-sitter grammars
+    pkgs.tree-sitter
+    #puthon
+    python3
+    python3Packages.pip
+    python3Packages.pyserial
+
+    # artuino
+    arduino-ide
   ];
 
   home.sessionVariables = {
@@ -58,6 +92,57 @@
     OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include";
   };
 
+  programs.zsh = {
+    enable = false;
+
+    # New option names:
+    syntaxHighlighting.enable = true;
+    autosuggestion.enable = true;
+
+    enableCompletion = true;
+    # New replacement for deprecated initExtra
+    initContent = ''
+      export EDITOR=nvim
+
+      PROMPT="%F{cyan}%n@%m%f %F{yellow}%~%f %# "
+
+      alias ll='ls -lah'
+      alias gs='git status'
+    '';
+
+    # Plugins still work the same
+    plugins = [
+      {
+        name = "zsh-autocomplete";
+        src = pkgs.fetchFromGitHub {
+          owner = "marlonrichert";
+          repo = "zsh-autocomplete";
+          rev = "23.07.13";
+          sha256 = "sha256-/6V6IHwB5p0GT1u5SAiUa20LjFDSrMo731jFBq/bnpw=";
+        };
+      }
+      {
+        name = "zsh-syntax-highlighting";
+        src = pkgs.fetchFromGitHub {
+          owner = "zsh-users";
+          repo = "zsh-syntax-highlighting";
+          rev = "0.8.0";
+          sha256 = "sha256-iJdWopZwHpSyYl5/FQXEW7gl/SrKaYDEtTH9cGP7iPo=";
+        };
+      }
+    ];
+  };
+
+  home.sessionPath = [ "$HOME/bin" "$HOME/.local/bin"];
+
+  home.file."bin/arduino-fixed" = {
+    text = ''
+      #!${pkgs.bash}/bin/bash
+      export PATH=${pkgs.python3.withPackages (ps: [ ps.pyserial ])}/bin:$PATH
+      exec ${pkgs.arduino-ide}/bin/arduino-ide "$@"
+    '';
+    executable = true;
+  };
   programs.tmux = {
     enable = true;
     clock24 = true; 
@@ -86,199 +171,5 @@
 	programs.neovim = {
 		enable = true;
 	};
-    
-  programs.nixvim = {
-    enable = false;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-    globals.mapleader = " ";
-    
-    opts = {
-      updatetime = 300;
-      number = true;
-      relativenumber = true;
-      shiftwidth = 4;
-      tabstop = 4;
-      swapfile = false;
-      undofile = true;
-      incsearch = true;
-      inccommand = "split";
-      ignorecase = true;
-      smartcase = true;
-      signcolumn = "yes:1";
-    };
-
-    # colorschemes.rose-pine.enable = true;
-    colorschemes.cyberdream.enable = true;
-    clipboard = {
-      providers = {
-        wl-copy.enable = true; # Wayland 
-        xsel.enable = true; # For X11
-      };
-      register = "unnamedplus";
-    };
- 
-    keymaps = [
-      # Center cursor when scrolling with Ctrl+d and Ctrl+u
-      {
-        mode = "n"; key = "<C-d>"; action = "<C-d>zz"; options.silent = true;
-      }
-      {
-        mode = "n"; key = "<C-u>"; action = "<C-u>zz"; options.silent = true;
-      }
-			{
-				mode = "i"; key = "<C-e>";   action = "if err != nil {<CR>return<CR>}<Esc>kA"; options.silent = true;
-			}
-
-      # Ctrl+Backspace: Delete previous word
-      {
-        mode = "i"; key = "<C-BS>"; action = "<C-w>"; options.silent = true;
-      }
-
-      # Ctrl+Delete: Delete next word
-      {
-        mode = "i"; key = "<C-Del>"; action = "<C-o>dw"; options.silent = true;
-      }
-
-    ];
-
-    plugins = {
-      lualine.enable = true;
-      autoclose.enable = true;
-      comment.enable = true;
-      telescope = {
-				enable = true;
-				extensions = {
-					fzf-native = {
-						enable = true;
-					};
-				};
-				settings = {
-				};
-				keymaps = {
-					"<leader>ff" = {
-						action = "find_files";
-						options = {
-							desc = "Find project files";
-						};
-					};
-				}; 
-			};
-      treesitter = {
-				enable = true;
-				settings = {
-					indent.enable = true;
-					highlight.enable = true;
-				};
-				folding = false;
-				nixvimInjections = true;
-				grammarPackages = pkgs.vimPlugins.nvim-treesitter.allGrammars;
-						};
-						treesitter-textobjects = {
-				enable = false;
-						};
-						luasnip.enable = true;
-						web-devicons.enable = true;
-						lspkind.enable = true;
-						which-key.enable = true;
-			};
-
-			plugins.lsp = {
-				enable = true;
-				inlayHints = true;
-				servers = {
-					csharp_ls.enable = true;
-					lua_ls.enable = true;
-					nil_ls.enable = true;
-					clangd.enable = true;
-					htmx.enable = true;
-					html.enable = true;
-					templ.enable = true;
-					ts_ls.enable = true;
-					gopls.enable = true;
-					yamlls.enable = true;
-					jsonls.enable = true;
-					rust_analyzer = {
-						enable = true;
-						installCargo = false;
-							installRustc = false;
-					};
-				};
-				keymaps.lspBuf = {
-					"gd" = "definition";
-					"gD" = "references";
-					"gt" = "type_definition";
-					"gi" = "implementation";
-					"K" = "hover";
-				};
-			};
-   	
-		plugins.nvim-surround = {
-			enable = true;
-		};
-
-    plugins.cmp = {
-      enable = true;
-      autoEnableSources = true;
-      settings.sources = [
-				{ name = "nvim_lsp"; }
-				{ name = "path"; }
-				{ name = "buffer"; }
-      ];
-      settings = {
-				mapping = {
-					"<CR>" = "cmp.mapping.confirm({ select = true })"; # Autocomplete confirm
-					"<C-Space>" = "cmp.mapping.complete()"; # Trigger completion manually
-
-				# Add next/previous selection
-				"<Tab>" = "cmp.mapping.select_next_item()";  # Next suggestion
-				"<S-Tab>" = "cmp.mapping.select_prev_item()"; # Previous suggestion
-				};
-      };
-		};
-
-    extraConfigLua = ''
-      -- Rust LSP settings
-			require("lspconfig").rust_analyzer.setup({
-				settings = {
-					["rust-analyzer"] = {
-						cargo = { allFeatures = true },
-			checkOnSave = { command = "clippy" },
-			diagnostics = {
-				enable = true,
-				-- experimental = {
-		 -- enable = true,
-				-- },
-						},
-					}
-				}
-			})
-
-		vim.diagnostic.config({
-			update_in_insert = true, -- Update diagnostics while typing
-			virtual_text = true, -- Show errors inline
-			signs = true, -- Show signs in the gutter
-			underline = true, -- Underline errors
-		})
-
-		vim.api.nvim_create_autocmd({"TextChanged", "TextChangedI"}, {
-			pattern = "*.rs",
-			callback = function()
-				vim.lsp.buf.clear_references()
-				vim.lsp.buf.document_highlight()
-				-- vim.diagnostic.setloclist()
-			end,
-		})
-
-	  vim.api.nvim_create_autocmd("FileType", {
-			pattern = { "javascript", "typescript", "html", "css", "nix"},
-			callback = function()
-			vim.opt_local.shiftwidth = 2
-			vim.opt_local.tabstop = 2
-			end
-		})
-    '';
-  };
-
 }
+    
